@@ -1,0 +1,5 @@
+{
+    "packname": "packname",
+    "filePrefix": "prefix",
+    "output": "dist"
+}
