@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "clean": "rm -rf dist",
+    "postinstall": "npm install koffi",
     "postbuild": "node ./scripts/index.js",
     "build:dev": "rollup -c --environment NODE_ENV:development  --bundleConfigAsCjs",
     "build:prod": "pnpm clean & rollup -c --environment NODE_ENV:production --bundleConfigAsCjs",
