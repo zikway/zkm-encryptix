@@ -1,5 +1,5 @@
 {
-    "packname": "packname",
-    "filePrefix": "prefix",
+    "packname": "zkm-encryptix",
+    "filePrefix": "zkm",
     "output": "dist"
 }
