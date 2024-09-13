@@ -8,8 +8,8 @@
     "postbuild": "node ./scripts/index.js",
     "build:dev": "rollup -c --environment NODE_ENV:development  --bundleConfigAsCjs",
     "build:prod": "pnpm clean & rollup -c --environment NODE_ENV:production --bundleConfigAsCjs",
-    "build": "npm run build:prod"
     "build": "npm run build:prod",
+    "publish:dev": "npm run build & node ./scripts/publish.js",
   },
   "keywords": [],
   "author": "wynn-w",
