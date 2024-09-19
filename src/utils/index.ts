@@ -10,7 +10,7 @@ export function getSourcePath(...args: string[]) {
 function isError(type: CmdEnum): boolean {
     return type === CmdEnum.ERROR
 }
-function isValidator(res: Partial<ResultType>){
+function isValidator(res: Partial<ResultType>) {
     return res.rx_buf ? false : true
 }
 export function AfterParse(_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
@@ -35,7 +35,7 @@ export function AfterSend(_target: any, _propertyKey: string, descriptor: Proper
             if (isValidator(result)) {
                 throw new Error('Please update SDK version or contact us!')
             }
-            return result.rx_buf;
+            return result.rx_buf.slice(0, result.rx_len + 1);
         } catch (error: any) {
             throw new Error(error?.message || error)
         }
