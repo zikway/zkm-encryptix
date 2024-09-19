@@ -4,11 +4,11 @@ import type { ResultType, strObj, ZkmLibOptions, TestKeySwitch, TestKeyType, Ver
 
 export class Encryptix {
     private lib: koffi.IKoffiLib;
-    private structureSet: WeakSet<strObj>;
+    private structureMap: Map<string, strObj>;
     protected ops: { inMtu?: number; outMtu?: number };
     constructor() {
         this.lib = koffi.load(getSourcePath("libzkm.dll"));
-        this.structureSet = new WeakSet<strObj>()
+        this.structureMap = new Map<string, strObj>()
         this.regBaseStructure();
         this.ops = {
             inMtu: 64,
@@ -124,10 +124,10 @@ export class Encryptix {
         );
     }
     private regStructure(structName: string, struct: strObj, cb?: () => void) {
-        if (!this.structureSet.has(struct)) {
+        if (!this.structureMap.has(structName)) {
             koffi.struct(structName, struct)
             typeof cb === 'function' && cb();
-            this.structureSet.add(struct);
+            this.structureMap.set(structName, struct);
         }
     }
     asyncFnc<T>(handle: koffi.KoffiFunction, ...args: any[]): Promise<T> {
