@@ -36,7 +36,7 @@ export class Encryptix {
         const handle = this.lib.func("CmdResult get_mode()");
         return this.asyncFnc<ResultType>(handle)
     }
-    async getElectric() {
+    async getBattery () {
         const handle = this.lib.func("CmdResult get_elec()");
         return this.asyncFnc<ResultType>(handle)
     }
@@ -82,7 +82,7 @@ export class Encryptix {
         return await this.asyncFnc<VersionAndMode>(handle, data);
     }
     @AfterParse
-    async parseBettery(data: ArrayBufferLike) {
+    async parseBattery(data: ArrayBufferLike) {
         this.regStructure("Electric", {
             type: "uint8_t",
             lBattery: "uint8_t",
