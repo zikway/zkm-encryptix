@@ -1,5 +1,5 @@
 import koffi from "koffi";
-import { getSourcePath } from "../utils";
+import { getSourcePath, AfterParse } from "../utils";
 import type { ResultType, strObj, ZkmLibOptions, TestKeySwitch, TestKeyType, VersionAndMode, BatteryType, MacAddressType, ConnType } from "../types";
 
 export class Encryptix {
@@ -20,12 +20,9 @@ export class Encryptix {
     }
     // send cmd
     async enableKeyMode() {
-        try {
-            const handle = this.lib.func("CmdResult get_key_on()");
-            return await this.asyncFnc<ResultType>(handle)
-        } catch (error: any) {
-            throw new Error(error?.message || error);
-        }
+        const handle = this.lib.func("CmdResult get_key_on()");
+        return await this.asyncFnc<ResultType>(handle)
+
     }
     async disibleKeyMode() {
         const handle = this.lib.func("CmdResult get_key_off()");
@@ -48,22 +45,21 @@ export class Encryptix {
         return this.asyncFnc<ResultType>(handle)
     }
     // recevie cmd
+    @AfterParse
     async parseKeyModeStatus(data: Uint8Array) {
-        try {
-            this.regStructure("TestKeySwitch", {
-                type: "uint8_t",
-                keyOn: "uint8_t"
-            })
-            const handle = this.lib.func("TestKeySwitch parse_test_key_switch(uint8_t* data);");
-            return await this.asyncFnc<TestKeySwitch>(handle, data)
-        } catch (error: any) {
-            throw new Error(error?.message || error);
-        }
+        this.regStructure("TestKeySwitch", {
+            type: "uint8_t",
+            keyOn: "uint8_t"
+        })
+        const handle = this.lib.func("TestKeySwitch parse_test_key_switch(uint8_t* data);");
+        return await this.asyncFnc<TestKeySwitch>(handle, data)
     }
+    @AfterParse
     async parseKey(data: ArrayBufferLike) {
         const handle = this.lib.func("TestKey parse_test_key(uint8_t* data)");
         return await this.asyncFnc<TestKeyType>(handle, data);
     }
+    @AfterParse
     async parseConnectStatus(data: ArrayBufferLike) {
         this.regStructure("Conn", {
             type: "uint8_t",
@@ -74,6 +70,7 @@ export class Encryptix {
         const handle = this.lib.func("Conn parse_conn(uint8_t* data)");
         return await this.asyncFnc<ConnType>(handle, data);
     }
+    @AfterParse
     async parseVersionAndMode(data: ArrayBufferLike) {
         this.regStructure("VersionAndMode", {
             type: "uint8_t",
@@ -84,6 +81,7 @@ export class Encryptix {
         const handle = this.lib.func("VersionAndMode parse_mode(uint8_t* data)");
         return await this.asyncFnc<VersionAndMode>(handle, data);
     }
+    @AfterParse
     async parseBettery(data: ArrayBufferLike) {
         this.regStructure("Electric", {
             type: "uint8_t",
@@ -93,6 +91,7 @@ export class Encryptix {
         const handle = this.lib.func("Electric parse_elec(uint8_t* data)");
         return await this.asyncFnc<BatteryType>(handle, data);
     }
+    @AfterParse
     async parseMacAddress(data: ArrayBufferLike) {
         this.regStructure("MacAddress", {
             type: "uint8_t",
