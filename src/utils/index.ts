@@ -1,5 +1,5 @@
 import { join } from "path";
-import { BaseType } from "../types";
+import { BaseType, ResultType } from "../types";
 import { CmdEnum } from "../enums";
 export function getRootPath() {
     return join(__dirname)
@@ -10,6 +10,9 @@ export function getSourcePath(...args: string[]) {
 function isError(type: CmdEnum): boolean {
     return type === CmdEnum.ERROR
 }
+function isValidator(res: Partial<ResultType>){
+    return res.rx_buf ? false : true
+}
 export function AfterParse(_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod: Function = descriptor.value;
     descriptor.value = async function (...args: any[]) {
@@ -19,6 +22,20 @@ export function AfterParse(_target: any, _propertyKey: string, descriptor: Prope
                 throw new Error('Parse abort, please check the data you passed in!')
             }
             return result;
+        } catch (error: any) {
+            throw new Error(error?.message || error)
+        }
+    };
+}
+export function AfterSend(_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod: Function = descriptor.value;
+    descriptor.value = async function (...args: any[]) {
+        try {
+            const result = await <ResultType>originalMethod.apply(this, args);
+            if (isValidator(result)) {
+                throw new Error('Please update SDK version or contact us!')
+            }
+            return result.rx_buf;
         } catch (error: any) {
             throw new Error(error?.message || error)
         }
