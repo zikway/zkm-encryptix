@@ -28,16 +28,16 @@ export function AfterParse(_target: any, _propertyKey: string, descriptor: Prope
     };
 }
 export function AfterSend(_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
-    const originalMethod: Function = descriptor.value;
+    const originalMethod = descriptor.value!;
     descriptor.value = async function (...args: any[]) {
         try {
-            const result = await <ResultType>originalMethod.apply(this, args);
+            const result = await <ResultType><unknown>originalMethod.apply(this, args);
             if (isValidator(result)) {
-                throw new Error('Please update SDK version or contact us!')
+                throw new Error('Please update SDK version or contact us!');
             }
             return result.rx_buf.slice(0, result.rx_len + 1);
         } catch (error: any) {
-            throw new Error(error?.message || error)
+            throw new Error(error?.message || error);
         }
     };
 }

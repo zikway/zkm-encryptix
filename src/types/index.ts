@@ -41,3 +41,12 @@ export type ConnType = BaseType & {
   usbStatus: Uint8Array,
   btRssi: Uint16Array,
 }
+export type AfterEncryptix = {
+  enableKeyMode(): Promise<Uint8Array>;
+  disibleKeyMode(): Promise<Uint8Array>;
+  getConnectStatus(): Promise<Uint8Array>;
+  getVersionAndMode(): Promise<Uint8Array>;
+  getBattery(): Promise<Uint8Array>;
+  getMacAddress(): Promise<Uint8Array>;
+}
+export type OverrideProperties<T, U> = Omit<T, keyof U> & U;
