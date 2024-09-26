@@ -142,7 +142,7 @@ export class Encryptix {
             this.structureMap.set(structName, struct);
         }
     }
-    asyncFnc<T>(handle: koffi.KoffiFunction, ...args: any[]): Promise<T> {
+    private asyncFnc<T>(handle: koffi.KoffiFunction, ...args: any[]): Promise<T> {
         return new Promise((res, rej) => {
             handle.async(...args || null, (e: any, r: T) => {
                 if (e) {
