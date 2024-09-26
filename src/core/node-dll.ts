@@ -5,11 +5,9 @@ import { CmdEnum } from "../enums";
 
 export class Encryptix {
     private lib: koffi.IKoffiLib;
-    private structureMap: Map<string, strObj>;
     private cmdMap: WeakMap<koffi.KoffiFunction, ResultType>
     constructor() {
         this.lib = koffi.load(getSourcePath("libzkm.dll"));
-        this.structureMap = new Map<string, strObj>();
         this.regBaseStructure();
         this.cmdMap = new WeakMap<koffi.KoffiFunction, ResultType>();
     }
@@ -136,10 +134,10 @@ export class Encryptix {
         );
     }
     private regStructure(structName: string, struct: strObj, cb?: () => void) {
-        if (!this.structureMap.has(structName)) {
+        if (!Handler.structureMap.has(structName)) {
             koffi.struct(structName, struct)
             typeof cb === 'function' && cb();
-            this.structureMap.set(structName, struct);
+            Handler.structureMap.set(structName, struct);
         }
     }
     private asyncFnc<T>(handle: koffi.KoffiFunction, ...args: any[]): Promise<T> {
@@ -161,4 +159,7 @@ export class Encryptix {
         this.cmdMap.set(handle, res);
         return res
     }
+}
+class Handler {
+    static structureMap = new Map<string, strObj>();
 }
