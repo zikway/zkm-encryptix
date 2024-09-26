@@ -1,14 +1,17 @@
 import koffi from "koffi";
 import { getSourcePath, AfterParse } from "../utils";
 import type { ResultType, strObj, ZkmLibOptions, TestKeySwitch, TestKeyType, VersionAndMode, BatteryType, MacAddressType, ConnType } from "../types";
+import { CmdEnum } from "../enums";
 
 export class Encryptix {
     private lib: koffi.IKoffiLib;
     private structureMap: Map<string, strObj>;
+    private cmdMap: WeakMap<koffi.KoffiFunction, ResultType>
     constructor() {
         this.lib = koffi.load(getSourcePath("libzkm.dll"));
         this.structureMap = new Map<string, strObj>();
         this.regBaseStructure();
+        this.cmdMap = new WeakMap<koffi.KoffiFunction, ResultType>();
     }
     private reflectParseMap = {
         [CmdEnum.BATTERY]: this.parseBattery,
@@ -26,28 +29,27 @@ export class Encryptix {
     // send cmd
     async enableKeyMode() {
         const handle = this.lib.func("CmdResult get_key_on()");
-        return await this.asyncFnc<ResultType>(handle)
-
+        return await this.cacheSendCmd(handle)
     }
     async disibleKeyMode() {
         const handle = this.lib.func("CmdResult get_key_off()");
-        return await this.asyncFnc<ResultType>(handle)
+        return await this.cacheSendCmd(handle)
     }
     async getConnectStatus() {
         const handle = this.lib.func("CmdResult get_conn()");
-        return this.asyncFnc<ResultType>(handle)
+        return await this.cacheSendCmd(handle)
     }
     async getVersionAndMode() {
         const handle = this.lib.func("CmdResult get_mode()");
-        return this.asyncFnc<ResultType>(handle)
+        return await this.cacheSendCmd(handle)
     }
     async getBattery () {
         const handle = this.lib.func("CmdResult get_elec()");
-        return this.asyncFnc<ResultType>(handle)
+        return await this.cacheSendCmd(handle)
     }
     async getMacAddress() {
         const handle = this.lib.func("CmdResult get_mac_address()");
-        return this.asyncFnc<ResultType>(handle)
+        return await this.cacheSendCmd(handle)
     }
     // recevie cmd
     @AfterParse
@@ -56,7 +58,7 @@ export class Encryptix {
             type: "uint8_t",
             keyOn: "uint8_t"
         })
-        const handle = this.lib.func("TestKeySwitch parse_test_key_switch(uint8_t* data);");
+        const handle = this.lib.func("TestKeySwitch parse_test_key_switch(uint8_t* data)");
         return await this.asyncFnc<TestKeySwitch>(handle, data)
     }
     @AfterParse
@@ -144,5 +146,13 @@ export class Encryptix {
                 }
             });
         })
+    }
+    private async cacheSendCmd(handle: koffi.KoffiFunction) {
+        if (this.cmdMap.has(handle)) {
+            return this.cmdMap.get(handle)!;
+        }
+        const res = await this.asyncFnc<ResultType>(handle)
+        this.cmdMap.set(handle, res);
+        return res
     }
 }
