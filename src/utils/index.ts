@@ -1,8 +1,21 @@
 import { join } from "path";
 import { BaseType, ResultType } from "../types";
 import { CmdEnum } from "../enums";
+
+let outPath = (): string => {
+    if (process.env.ZKM_TEST === 'true') {
+        outPath = () => {
+            return join("..", "..")
+        }
+    } else {
+        outPath = () => {
+            return "."
+        }
+    }
+    return outPath()
+}
 export function getRootPath() {
-    return join(__dirname)
+    return join(__dirname, outPath())
 }
 export function getSourcePath(...args: string[]) {
     return join(getRootPath(), "source", ...args)
