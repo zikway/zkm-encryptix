@@ -1,5 +1,5 @@
 import koffi from "koffi";
-import { getSourcePath, AfterParse } from "../utils";
+import { getSourcePath, AfterParse, AfterSend } from "../utils";
 import type { ResultType, strObj, ZkmLibOptions, TestKeySwitch, TestKeyType, VersionAndMode, BatteryType, MacAddressType, ConnType } from "../types";
 import { CmdEnum } from "../enums";
 
@@ -27,33 +27,39 @@ export class Encryptix {
         return await fnc(data);
     }
     // send cmd
-    async enableKeyMode() {
+    @AfterSend
+    async genEnableKeyMode() {
         const handle = this.lib.func("CmdResult get_key_on()");
         return await this.cacheSendCmd(handle)
     }
-    async disibleKeyMode() {
+    @AfterSend
+    async genDisableKeyMode() {
         const handle = this.lib.func("CmdResult get_key_off()");
         return await this.cacheSendCmd(handle)
     }
-    async getConnectStatus() {
+    @AfterSend
+    async genConnectStatus() {
         const handle = this.lib.func("CmdResult get_conn()");
         return await this.cacheSendCmd(handle)
     }
-    async getVersionAndMode() {
+    @AfterSend
+    async genVersionAndMode() {
         const handle = this.lib.func("CmdResult get_mode()");
         return await this.cacheSendCmd(handle)
     }
-    async getBattery () {
+    @AfterSend
+    async genBattery() {
         const handle = this.lib.func("CmdResult get_elec()");
         return await this.cacheSendCmd(handle)
     }
-    async getMacAddress() {
+    @AfterSend
+    async genMacAddress() {
         const handle = this.lib.func("CmdResult get_mac_address()");
         return await this.cacheSendCmd(handle)
     }
     // recevie cmd
     @AfterParse
-    async parseKeyModeStatus(data: Uint8Array) {
+    async parseKeyModeStatus(data: ArrayBufferLike) {
         this.regStructure("TestKeySwitch", {
             type: "uint8_t",
             keyOn: "uint8_t"
@@ -67,7 +73,7 @@ export class Encryptix {
         return await this.asyncFnc<TestKeyType>(handle, data);
     }
     @AfterParse
-    async parseConnectStatus(data: ArrayBufferLike) {
+    async parseConnectAndRssi(data: ArrayBufferLike) {
         this.regStructure("Conn", {
             type: "uint8_t",
             btStatus: "uint8_t",
