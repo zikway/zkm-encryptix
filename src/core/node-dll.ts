@@ -83,7 +83,7 @@ export class Encryptix {
             type: "uint8_t",
             btVersion: "uint8_t",
             mcuVersion: "uint8_t",
-            mode: "uint8_t"
+            mode: "uint8_t [9]"
         })
         const handle = this.lib.func("VersionAndMode parse_mode(uint8_t* data)");
         return await this.asyncFnc<VersionAndMode>(handle, data);
@@ -113,7 +113,7 @@ export class Encryptix {
             {
                 type: "uint8_t",
                 rx_len: "uint16_t",
-                rx_buf: "uint8_t [1024]"
+                rx_buf: "uint8_t [40]"
             }
         );
         this.regStructure(
