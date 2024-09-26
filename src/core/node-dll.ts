@@ -14,12 +14,12 @@ export class Encryptix {
         this.cmdMap = new WeakMap<koffi.KoffiFunction, ResultType>();
     }
     private reflectParseMap = {
-        [CmdEnum.BATTERY]: this.parseBattery,
-        [CmdEnum.MAC_ADDRESS]: this.parseMacAddress,
-        [CmdEnum.PARSE_KEY]: this.parseKey,
-        [CmdEnum.CONN_AND_DB]: this.parseConnectAndRssi,
-        [CmdEnum.KEY_MODE_STATUS]: this.parseKeyModeStatus,
-        [CmdEnum.VERSION_AND_MODE]: this.parseVersionAndMode,
+        [CmdEnum.BATTERY]: this.parseBattery.bind(this),
+        [CmdEnum.MAC_ADDRESS]: this.parseMacAddress.bind(this),
+        [CmdEnum.PARSE_KEY]: this.parseKey.bind(this),
+        [CmdEnum.CONN_AND_DB]: this.parseConnectAndRssi.bind(this),
+        [CmdEnum.KEY_MODE_STATUS]: this.parseKeyModeStatus.bind(this),
+        [CmdEnum.VERSION_AND_MODE]: this.parseVersionAndMode.bind(this),
         [CmdEnum.ERROR]: () => Promise.reject('Parse abort, please check the data you passed in!'),
     }
     async parseTypeEvent(type: CmdEnum, data: ArrayBufferLike) {
