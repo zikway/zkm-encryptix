@@ -22,31 +22,30 @@ export type TestKeyType = BaseType & {
   lxxyy: Int16Array;
   rxxyy: Int16Array;
   l2r2: Uint8Array;
-}
-
+};
 export type VersionAndMode = BaseType & {
-  btVersion: Uint8Array,
-  mcuVersion: Uint8Array,
-  mode: Uint8Array,
-}
+  btVersion: string;
+  mcuVersion: string;
+  mode: string;
+};
 export type BatteryType = BaseType & {
-  lBattery: Uint8Array,
-  rBattery: Uint8Array,
-}
+  lBattery: Uint8Array;
+  rBattery: Uint8Array;
+};
 export type MacAddressType = BaseType & {
-  macAddress: Uint8Array,
-}
+  mac: string;
+};
 export type ConnType = BaseType & {
-  btStatus: Uint8Array,
-  usbStatus: Uint8Array,
-  btRssi: Uint16Array,
-}
+  btStatus: number;
+  usbStatus: number;
+  btRssi: number;
+};
 export type AfterEncryptix = {
-  enableKeyMode(): Promise<Uint8Array>;
-  disibleKeyMode(): Promise<Uint8Array>;
-  getConnectStatus(): Promise<Uint8Array>;
-  getVersionAndMode(): Promise<Uint8Array>;
-  getBattery(): Promise<Uint8Array>;
-  getMacAddress(): Promise<Uint8Array>;
+  genEnableKeyMode(): Promise<Uint8Array>;
+  genDisableKeyMode(): Promise<Uint8Array>;
+  genConnectStatus(): Promise<Uint8Array>;
+  genVersionAndMode(): Promise<Uint8Array>;
+  genBattery(): Promise<Uint8Array>;
+  genMacAddress(): Promise<Uint8Array>;
 }
 export type OverrideProperties<T, U> = Omit<T, keyof U> & U;

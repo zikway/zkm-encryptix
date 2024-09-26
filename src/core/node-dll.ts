@@ -87,9 +87,9 @@ export class Encryptix {
     async parseVersionAndMode(data: ArrayBufferLike) {
         this.regStructure("VersionAndMode", {
             type: "uint8_t",
-            btVersion: "uint8_t",
-            mcuVersion: "uint8_t",
-            mode: "uint8_t [9]"
+            btVersion: "char[3]",
+            mcuVersion: "char[3]",
+            mode: "char[10]"
         })
         const handle = this.lib.func("VersionAndMode parse_mode(uint8_t* data)");
         return await this.asyncFnc<VersionAndMode>(handle, data);
@@ -108,7 +108,7 @@ export class Encryptix {
     async parseMacAddress(data: ArrayBufferLike) {
         this.regStructure("MacAddress", {
             type: "uint8_t",
-            mac: "uint8_t [6]"
+            mac: "char[18]"
         })
         const handle = this.lib.func("MacAddress parse_mac_address(uint8_t* data)");
         return await this.asyncFnc<MacAddressType>(handle, data);
