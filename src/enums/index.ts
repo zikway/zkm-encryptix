@@ -1,5 +1,5 @@
 export enum CmdEnum {
-    TEST_MODE_CHANGE = 0xd2,
+    KEY_MODE_STATUS = 0xd2,
     // KEY_OFF = 0xd3,
     PARSE_KEY = 0x02,
     /**

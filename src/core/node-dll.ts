@@ -5,18 +5,23 @@ import type { ResultType, strObj, ZkmLibOptions, TestKeySwitch, TestKeyType, Ver
 export class Encryptix {
     private lib: koffi.IKoffiLib;
     private structureMap: Map<string, strObj>;
-    protected ops: { inMtu?: number; outMtu?: number };
     constructor() {
         this.lib = koffi.load(getSourcePath("libzkm.dll"));
-        this.structureMap = new Map<string, strObj>()
+        this.structureMap = new Map<string, strObj>();
         this.regBaseStructure();
-        this.ops = {
-            inMtu: 64,
-            outMtu: 64
-        };
     }
-    setBasicInfo(ops: ZkmLibOptions) {
-        this.ops = { ...this.ops, ...ops };
+    private reflectParseMap = {
+        [CmdEnum.BATTERY]: this.parseBattery,
+        [CmdEnum.MAC_ADDRESS]: this.parseMacAddress,
+        [CmdEnum.PARSE_KEY]: this.parseKey,
+        [CmdEnum.CONN_AND_DB]: this.parseConnectAndRssi,
+        [CmdEnum.KEY_MODE_STATUS]: this.parseKeyModeStatus,
+        [CmdEnum.VERSION_AND_MODE]: this.parseVersionAndMode,
+        [CmdEnum.ERROR]: () => Promise.reject('Parse abort, please check the data you passed in!'),
+    }
+    async parseTypeEvent(type: CmdEnum, data: ArrayBufferLike) {
+        const fnc = this.reflectParseMap[type];
+        return await fnc(data);
     }
     // send cmd
     async enableKeyMode() {
