@@ -20,7 +20,7 @@ export class Encryptix {
         [CmdEnum.VERSION_AND_MODE]: this.parseVersionAndMode.bind(this),
         [CmdEnum.ERROR]: () => Promise.reject('Parse abort, please check the data you passed in!'),
     }
-    async parseTypeEvent(type: CmdEnum, data: ArrayBufferLike) {
+    async parseTypeEvent(type: CmdEnum, data: Buffer) {
         const fnc = this.reflectParseMap[type];
         return await fnc(data);
     }
@@ -57,7 +57,7 @@ export class Encryptix {
     }
     // recevie cmd
     @AfterParse
-    async parseKeyModeStatus(data: ArrayBufferLike) {
+    async parseKeyModeStatus(data: Buffer) {
         this.regStructure("TestKeySwitch", {
             type: "uint8_t",
             keyOn: "uint8_t"
@@ -66,12 +66,12 @@ export class Encryptix {
         return await this.asyncFnc<TestKeySwitch>(handle, data)
     }
     @AfterParse
-    async parseKey(data: ArrayBufferLike) {
+    async parseKey(data: Buffer) {
         const handle = this.lib.func("TestKey parse_test_key(uint8_t* data)");
         return await this.asyncFnc<TestKeyType>(handle, data);
     }
     @AfterParse
-    async parseConnectAndRssi(data: ArrayBufferLike) {
+    async parseConnectAndRssi(data: Buffer) {
         this.regStructure("Conn", {
             type: "uint8_t",
             btStatus: "uint8_t",
@@ -82,7 +82,7 @@ export class Encryptix {
         return await this.asyncFnc<ConnType>(handle, data);
     }
     @AfterParse
-    async parseVersionAndMode(data: ArrayBufferLike) {
+    async parseVersionAndMode(data: Buffer) {
         this.regStructure("VersionAndMode", {
             type: "uint8_t",
             btVersion: "char[3]",
@@ -93,7 +93,7 @@ export class Encryptix {
         return await this.asyncFnc<VersionAndMode>(handle, data);
     }
     @AfterParse
-    async parseBattery(data: ArrayBufferLike) {
+    async parseBattery(data: Buffer) {
         this.regStructure("Electric", {
             type: "uint8_t",
             lBattery: "uint8_t",
@@ -103,7 +103,7 @@ export class Encryptix {
         return await this.asyncFnc<BatteryType>(handle, data);
     }
     @AfterParse
-    async parseMacAddress(data: ArrayBufferLike) {
+    async parseMacAddress(data: Buffer) {
         this.regStructure("MacAddress", {
             type: "uint8_t",
             mac: "char[18]"
