@@ -1,6 +1,6 @@
 import koffi from "koffi";
 import { getSourcePath, AfterParse, AfterSend } from "../utils";
-import type { ResultType, strObj, ZkmLibOptions, TestKeySwitch, TestKeyType, VersionAndMode, BatteryType, MacAddressType, ConnType } from "../types";
+import type { ResultType, strObj, TestKeySwitch, TestKeyType, VersionAndMode, BatteryType, MacAddressType, ConnType } from "../types";
 import { CmdEnum } from "../enums";
 
 export class Encryptix {
@@ -109,7 +109,9 @@ export class Encryptix {
             mac: "char[18]"
         })
         const handle = this.lib.func("MacAddress parse_mac_address(uint8_t* data)");
-        return await this.asyncFnc<MacAddressType>(handle, data);
+        const res = await this.asyncFnc<MacAddressType>(handle, data);
+        res.mac = res.mac.split(":").reverse().join(":")
+        return res;
     }
     private regBaseStructure() {
         this.regStructure(
